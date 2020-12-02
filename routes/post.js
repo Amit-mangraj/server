@@ -22,7 +22,7 @@ router.get('/mypost',requireLogin,(req,res)=>{
 })
 
 router.delete('/deletemypost',requireLogin,(req,res)=>{
-    const {_id} = req.body
+    
     Post.findById({_id}).then(myposts=>{
         res.status(200).json({message:"Post deleted Succesfully"})
     }).catch(err=>{
