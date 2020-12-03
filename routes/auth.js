@@ -4,15 +4,32 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const User = mongoose.model("User")
 const bcrypt = require('bcryptjs')
-const jwt   = require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 
-const {JWT_SECRET} =require('../key')
+const { JWT_SECRET } = require('../key')
 
 const requireLogin = require('../middeleware/requireLogin')
-router.get('/protected',requireLogin, (req, res) => {
-    const{token} = req.body
-    if(token)
-    res.send("hello")
+router.get('/protected', requireLogin, (req, res) => {
+    const { token } = req.body
+    if (token)
+        res.send("hello")
+})
+
+router.get('/getalluser', (req, res) => {
+    User.find().then(data => {
+        res.json({ data })
+    }).catch(err => {
+        console.log(err)
+    })
+})
+router.post('/searchuser', (req, res) => {
+    const { name } = req.body
+    User.findOne({ name: name }).then(data => {
+        const {name,email}= data
+        res.json({ data,user:{name,email} }).then(console.log(data))
+    }).catch(err => {
+        console.log(err)
+    })
 })
 
 router.post('/signup', (req, res) => {
@@ -58,21 +75,21 @@ router.post('/signin', (req, res) => {
         bcrypt.compare(password, savedUser.password).then(doMatch => {
             if (doMatch) {
                 // res.status(200).json({ messsage: "Successful signed in" })
-                const token = jwt.sign({_id:savedUser._id},JWT_SECRET)
-                const{_id,name,email}= savedUser
-               res.json({token,user:{_id,name,email}})
+                const token = jwt.sign({ _id: savedUser._id }, JWT_SECRET)
+                const { _id, name, email } = savedUser
+                res.json({ token, user: { _id, name, email } })
             }
             else {
-                return res.status(422).json({ messsage: "Invalid Email or Password" })
+                return res.status(422).json({ error: "Invalid Email or Password" })
             }
         })
+            .catch(err => {
+                console.log(err)
+            })
+    })
         .catch(err => {
-            console.log(err)
+            console.log(err);
         })
-    })
-    .catch(err=>{
-        console.log(err);
-    })
 })
 
 module.exports = router
