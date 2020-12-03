@@ -18,5 +18,5 @@ const postSchema = new mongoose.Schema({
         ref: "User"
     }
 })
-
+//this is comment
 mongoose.model("Post", postSchema)

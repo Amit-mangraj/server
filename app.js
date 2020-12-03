@@ -14,7 +14,7 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', (err) => {
     console.log("err in connecting", err)
 })
-
+//this is comment
 require('./models/user')
 require('./models/post')
 // mongoose.model("User")
